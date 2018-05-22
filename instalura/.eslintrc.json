@@ -3,12 +3,28 @@
         "browser": true,
         "es6": true
     },
-    "extends": "eslint:recommended",
+    "extends": "standard-jsx",
     "parserOptions": {
-        "sourceType": "module"
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }        
     },
+    "plugins": [
+        "react"
+      ],    
     "rules": {
         "no-undef": 1,
-        "no-unused-vars": 1        
+        "no-unused-vars": 1,
+        "react/jsx-no-bind": ["error", {
+            "allowArrowFunctions": true,
+            "allowBind": true,
+            "ignoreRefs": true
+          }],
+          "react/no-did-update-set-state": "error",
+          "react/no-unknown-property": "error",
+          "react/no-unused-prop-types": "error",
+          "react/prop-types": "error",
+          "react/react-in-jsx-scope": "error"              
     }
 }
