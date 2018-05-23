@@ -1,13 +1,31 @@
 import React, { Component } from 'react';
-import Foto from './Foto';
+import FotoItem from './Foto';
+import FotoService from '../services/FotoService';
 
 export default class Timeline extends Component {
+
+    constructor() {
+
+        super();
+        this.state = {fotos: []};
+        this._fotoService = new FotoService();
+    }
+
+    componentDidMount() {
+
+        this._fotoService
+        .obterFotos()
+        .then(fotos => this.setState({fotos: fotos}))
+        .catch(erro => {});
+    }
 
     render() {
 
         return (
             <div className="fotos container">
-                <Foto />
+                {
+                    this.state.fotos.map(foto => <FotoItem foto={foto} />)
+                }                
             </div>             
         );        
     }
