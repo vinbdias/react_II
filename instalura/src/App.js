@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import './css/reset.min.css';
-import './css/timeline.css';
 import Header from './componentes/Header';
 import Timeline from './componentes/Timeline';
+import {Link} from 'react-router-dom';
 
 class App extends Component {
   render() {

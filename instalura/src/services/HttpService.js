@@ -14,15 +14,16 @@ export default class HttpService {
             .then(res => res.json());
     }
 
-    post(url, dado) {
+    post(url, dados) {
 
         return fetch(url, {
 
-            headers: { 'Content-type': 'application/json' },
+            headers: new Headers({ 'Content-type': 'application/json' }),
             method: 'post',
-            body: JSON.stringify(dado)
+            body: JSON.stringify(dados)
         })
         .then(res => this._handleErrors(res))
-        .then(res => res.json());
+        .then(res => res.json())
+        .catch(erro => erro);
     }
 }
