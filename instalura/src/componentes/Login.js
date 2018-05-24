@@ -8,8 +8,7 @@ export default class Login extends Component {
 
         super(props);
         this.state = {
-            mensagem: this.props.mensagem,
-            autenticado: false
+            mensagem: this.props.mensagem            
         }
         this._usuarioService = new UsuarioService();
     }
@@ -26,17 +25,13 @@ export default class Login extends Component {
 
         this._usuarioService
             .autenticar(dadosAutenticacaoUsuario)
-            .then(token => {
-
-                localStorage.setItem('auth-token', token);
-                this.setState({ autenticado: true });
-            })
+            .then(token => localStorage.setItem('auth-token', token))
             .catch(erro => this.setState({mensagem: erro.message}));
     }
 
     render() {
 
-        if(this.state.autenticado)
+        if(this._usuarioService.verificarAutenticacao())
             return (<Redirect to="../timeline" />);
 
         return (

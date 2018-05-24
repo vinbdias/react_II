@@ -13,4 +13,12 @@ export default class UsuarioService extends HttpService {
         .then(res => res.text())
         .catch(erro => { throw new Error('Não foi possível autenticar o usuário.'); });      
     }
+
+    verificarAutenticacao() {
+
+        if(localStorage.getItem('auth-token') === null)
+            return false;
+
+        return true;         
+    }
 }
