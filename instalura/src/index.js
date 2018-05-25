@@ -16,11 +16,11 @@ let usuarioService = new UsuarioService();
 ReactDOM.render((
     <Router>
         <Switch>
-            <Route exact path="/" render={(props) => usuarioService.verificarAutenticacao() ? (<App {...props} />) : (<Login />)} />  
+            <Route exact path="/" render={(props) => usuarioService.obterToken() ? (<App {...props} />) : (<Login />)} />  
             <Route path="/login" component={Login} />  
             <Route path="/logout" component={Logout} />  
             <Route path="/timeline/:usuario?" render={(props) =>
-                 ((typeof props.match.params.usuario !== 'undefined') || usuarioService.verificarAutenticacao()) ?
+                 ((props.match.params.usuario !== undefined) || (props.usuario !== undefined) || usuarioService.obterToken()) ?
                   (<App {...props} />) :
                    (<Login mensagem="Favor autenticar para acessar o endereço" />)} />                
         </Switch>

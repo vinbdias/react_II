@@ -34,7 +34,7 @@ export default class Login extends Component {
 
     render() {
 
-        if(this._usuarioService.verificarAutenticacao()) 
+        if(this._usuarioService.obterToken()) 
             return (<Redirect to="../timeline" />);
             
         return (

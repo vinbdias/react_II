@@ -10,16 +10,18 @@ export default class App extends Component {
         super(props);
 
         let usuario = '';
-        if(typeof this.props.usuario !== undefined)
+        if(this.props.usuario !== undefined)
             usuario = this.props.usuario;
-        else if(typeof this.props.match.params.usuario !== undefined)
+        else if(this.props.match.params.usuario !== undefined)
             usuario = this.props.match.params.usuario;
+
+
 
         this.state = { usuario: usuario };    
     }
 
     componentWillReceiveProps(nextProps) {
-
+        
         if(nextProps.match.params.usuario !== undefined)
            this.setState({ usuario: nextProps.match.params.usuario });
     }

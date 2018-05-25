@@ -14,13 +14,7 @@ export default class Timeline extends Component {
 
     componentWillMount() {
 
-        let usuario = '';
-
-        if(this.props.usuario !== undefined)
-            usuario = this.props.usuario;
-        else if(this.state.usuario !== undefined)
-            usuario = this.state.usuario;
-        
+        let usuario = (this.props.usuario !== undefined) ? this.props.usuario : '';
         this._carregarFotos(usuario);
     }  
     

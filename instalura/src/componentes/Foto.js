@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import FotoService from '../services/FotoService';
+import Pubsub from 'pubsub-js';
 
 class FotoHeader extends Component {
 
@@ -21,13 +23,27 @@ class FotoHeader extends Component {
 
 class FotoInfo extends Component {
 
+    constructor(props) {
+
+        super(props);
+        this.state = { usuariosCurtiram: this.props.foto.likers };
+    }
+    
+    componentWillMount() {
+
+        Pubsub.subscribe('atualiza-usuarios-curtiram', (topico, infoUsuarioCurtiu) => {
+
+            this.state.usuariosCurtiram.find(usuarioCurtiu => usuarioCurtiu.login == infoUsuarioCurtiu.liker.login);
+        });
+    }
+
     render() {
 
         return (
         <div className="foto-info">
             <div className="foto-info-likes">
               {
-                  this.props.foto.likers.map(liker => { return <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login},</Link> })
+                  this.state.usuariosCurtiram.map(usuarioCurtiu => { return <Link to={`/timeline/${usuarioCurtiu.login}`} key={usuarioCurtiu.login}>{usuarioCurtiu.login},</Link> })
               }
                curtiram            
             </div>
@@ -53,11 +69,30 @@ class FotoInfo extends Component {
 
 class FotoAtualizacoes extends Component {
 
+    constructor(props) {
+
+        super(props);
+        this._fotoService = new FotoService();
+        this.state = { curtida: this.props.foto.likeada };
+    }
+
+    curtirFoto(evento) {
+
+        evento.preventDefault();
+        this._fotoService.curtirFoto(this.props.foto.id)
+            .then(usuarioCurtiu => {
+
+                this.setState({ curtida: !this.state.curtida });
+                Pubsub.publish('atualiza-usuarios-curtiram', { fotoId: this.props.foto.id, usuarioCurtiu });
+            })
+            .catch((erro) => { throw new Error(erro) });
+    }
+
     render() {
 
         return (
         <section className="fotoAtualizacoes">
-            <a href="#" className="fotoAtualizacoes-like">Likar</a>
+            <a onClick={this.curtirFoto.bind(this)} className={this.state.curtida ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Curtir</a>
             <form className="fotoAtualizacoes-form">
                 <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" />
                 <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit" />
@@ -76,7 +111,7 @@ export default class FotoItem extends Component {
             <FotoHeader foto={this.props.foto} />
             <img alt="foto" className="foto-src" src={this.props.foto.urlFoto} />
             <FotoInfo foto={this.props.foto} />
-            <FotoAtualizacoes />
+            <FotoAtualizacoes foto={this.props.foto} />
         </div>            
         );
     }

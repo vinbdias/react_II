@@ -2,7 +2,10 @@ export default class HttpService {
 
     _handleErrors(res) {
 
-        if(!res.ok) throw new Error(res.statusText);
+        if(!res.ok) 
+            throw new Error(res.statusText);
+        else if([403, 404, 500].includes(res.status))
+            throw new Error(res.error);
 
         return res;
     }
@@ -24,6 +27,6 @@ export default class HttpService {
         })
         .then(res => this._handleErrors(res))
         .then(res => res.json())
-        .catch(erro => erro);
+        .catch(erro => { throw new Error(erro.message) });
     }
 }

@@ -14,15 +14,15 @@ export default class UsuarioService extends HttpService {
         .catch(erro => { throw new Error('Não foi possível autenticar o usuário.'); });      
     }
 
-    verificarAutenticacao() {
+    obterToken() {
 
-        if(localStorage.getItem('auth-token') === null)
-            return false;
+        if(localStorage.getItem('auth-token') !== null)
+            return localStorage.getItem('auth-token');
 
-        return true;         
+        return false;          
     }
 
-    desautenticar() {
+    removerToken() {
 
         localStorage.removeItem('auth-token');
     }

@@ -12,7 +12,7 @@ export default class Logout extends Component {
 
     componentWillMount() {
 
-        this._usuarioService.desautenticar();
+        this._usuarioService.removerToken();
     }
 
     render() {
