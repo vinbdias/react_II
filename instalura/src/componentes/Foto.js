@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class FotoHeader extends Component {
 
-    render() {
+    render(data) {
 
         return (
             <header className="foto-header">
                 <figure className="foto-usuario">
                     <img src={this.props.foto.urlPerfil} alt="foto do usuario" />
                     <figcaption className="foto-usuario">
-                        <a href="#">{this.props.foto.loginUsuario}</a>  
+                        <Link to={`/timeline/${this.props.foto.loginUsuario}`}>{this.props.foto.loginUsuario}</Link>  
                     </figcaption>
                 </figure>
                 <time className="foto-data">{this.props.foto.horario}</time>
@@ -26,7 +27,7 @@ class FotoInfo extends Component {
         <div className="foto-info">
             <div className="foto-info-likes">
               {
-                  this.props.foto.likers.map(liker => { return <a key={liker.login} href="#">{liker.login},</a> })
+                  this.props.foto.likers.map(liker => { return <Link to={`/timeline/${liker.login}`} key={liker.login}>{liker.login},</Link> })
               }
                curtiram            
             </div>
@@ -40,7 +41,7 @@ class FotoInfo extends Component {
               {
                   this.props.foto.comentarios.map(comentario => 
                   <li key={comentario.id} className="comentario">
-                    <a className="foto-info-autor">{comentario.login} </a>
+                    <Link to={`/timeline/${comentario.login}`} className="foto-info-autor">{comentario.login} </Link>
                     {comentario.texto}
                   </li>)
               }

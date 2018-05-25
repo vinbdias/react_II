@@ -3,17 +3,36 @@ import Header from './componentes/Header';
 import Timeline from './componentes/Timeline';
 import {Link} from 'react-router-dom';
 
-class App extends Component {
-  render() {
-    return (
-        <div id="root">
-            <div data-reactroot="" className="main">
-            <Header />
-            <Timeline />
-            </div> 
-        </div>
-    );
-  }
-}
+export default class App extends Component {
 
-export default App;
+    constructor(props) {
+
+        super(props);
+
+        let usuario = '';
+        if(typeof this.props.usuario !== undefined)
+            usuario = this.props.usuario;
+        else if(typeof this.props.match.params.usuario !== undefined)
+            usuario = this.props.match.params.usuario;
+
+        this.state = { usuario: usuario };    
+    }
+
+    componentWillReceiveProps(nextProps) {
+
+        if(nextProps.match.params.usuario !== undefined)
+           this.setState({ usuario: nextProps.match.params.usuario });
+    }
+
+    render(data) {
+
+        return (
+            <div id="root">
+                <div data-reactroot="" className="main">
+                    <Header />
+                    <Timeline usuario={this.state.usuario} />
+                </div>
+            </div>
+        );
+    }
+}

@@ -7,9 +7,9 @@ export default class Login extends Component {
     constructor(props) {
 
         super(props);
-        this.state = {
-            mensagem: this.props.mensagem            
-        }
+
+        this.state = { mensagem: this.props.mensagem };
+
         this._usuarioService = new UsuarioService();
     }
 
@@ -17,7 +17,7 @@ export default class Login extends Component {
 
         evento.preventDefault();
 
-        const dadosAutenticacaoUsuario = {
+        let dadosAutenticacaoUsuario = {
 
             login: this.login.value,
             senha: this.senha.value
@@ -25,15 +25,18 @@ export default class Login extends Component {
 
         this._usuarioService
             .autenticar(dadosAutenticacaoUsuario)
-            .then(token => localStorage.setItem('auth-token', token))
+            .then(token => { 
+                localStorage.setItem('auth-token', token);
+                this.forceUpdate();
+             })
             .catch(erro => this.setState({mensagem: erro.message}));
     }
 
     render() {
 
-        if(this._usuarioService.verificarAutenticacao())
+        if(this._usuarioService.verificarAutenticacao()) 
             return (<Redirect to="../timeline" />);
-
+            
         return (
 
            <div className="login-box">

@@ -21,4 +21,9 @@ export default class UsuarioService extends HttpService {
 
         return true;         
     }
+
+    desautenticar() {
+
+        localStorage.removeItem('auth-token');
+    }
 }

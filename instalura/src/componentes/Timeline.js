@@ -4,23 +4,42 @@ import FotoService from '../services/FotoService';
 
 export default class Timeline extends Component {
 
-    constructor() {
+    constructor(props) {
 
-        super();
+        super(props);
+
         this.state = {fotos: []};
         this._fotoService = new FotoService();
     }
 
-    componentDidMount() {
+    componentWillMount() {
 
-        this._fotoService
-        .obterFotos()
-        .then(fotos => this.setState({fotos: fotos}))
-        .catch(erro => {});
+        let usuario = '';
+
+        if(this.props.usuario !== undefined)
+            usuario = this.props.usuario;
+        else if(this.state.usuario !== undefined)
+            usuario = this.state.usuario;
+        
+        this._carregarFotos(usuario);
+    }  
+    
+    componentWillReceiveProps(nextProps) {
+
+        if(nextProps.usuario !== undefined)       
+            this._carregarFotos(nextProps.usuario);
     }
 
-    render() {
+    _carregarFotos(usuario) {
 
+        this._fotoService
+        .obterFotos(usuario)
+        .then(fotos => this.setState({fotos: fotos}))
+        .catch(erro => console.log(erro));
+    }
+
+    render() {            
+        
         return (
             <div className="fotos container">
                 {
