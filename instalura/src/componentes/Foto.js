@@ -131,7 +131,7 @@ class FotoAtualizacoes extends Component {
 
         evento.preventDefault();
         this._fotoService
-        .comentarFoto(this.props.foto.id, this.comentario.value)
+        .comentarFoto(this.props.foto.id, this._comentario.value)
         .then(novoComentario => {
 
             Pubsub.publish('novos-comentarios', {
@@ -148,7 +148,7 @@ class FotoAtualizacoes extends Component {
         <section className="fotoAtualizacoes">
             <a onClick={this.curtirFoto.bind(this)} className={this.state.curtida ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Curtir</a>
             <form className="fotoAtualizacoes-form" onSubmit={this.comentarFoto.bind(this)}>
-                <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" ref={input => this.comentario = input} />
+                <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" ref={input => this._comentario = input} />
                 <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit" />
             </form>
         </section>            
