@@ -7,13 +7,16 @@ export default class FotoService extends HttpService {
 
         super();
         this._usuarioService = new UsuarioService();
+
+        this._privateApiUrl += `fotos`;
+        this._publicApiUrl += `fotos`;
     }
 
     obterFotos(usuario) {
         
         let url = (usuario != '') ?
-         `http://localhost:8080/api/public/fotos/${usuario}` :
-          `http://localhost:8080/api/fotos?X-AUTH-TOKEN=${this._usuarioService.obterToken()}` ;
+         `${this._publicApiUrl}/${usuario}` :
+          `${this._privateApiUrl}?X-AUTH-TOKEN=${this._usuarioService.obterToken()}` ;
 
         return new Promise((resolve, reject) => {
 
@@ -26,9 +29,23 @@ export default class FotoService extends HttpService {
     curtirFoto(fotoId) {
         return new Promise((resolve, reject) => {
 
-            this.post(`http://localhost:8080/api/fotos/${fotoId}/like?X-AUTH-TOKEN=${this._usuarioService.obterToken()}`, {})
+            this.post(`${this._privateApiUrl}/${fotoId}/like?X-AUTH-TOKEN=${this._usuarioService.obterToken()}`, {})
             .then(usuarioCurtiu => resolve(usuarioCurtiu))
             .catch(erro => reject('Não foi possível curtir a foto.'));
+        });
+    }
+
+    comentarFoto(fotoId, comentario) {
+
+        return new Promise((resolve, reject) => {
+
+            this
+            .post(`${this._privateApiUrl}/${fotoId}/comment?X-AUTH-TOKEN=${this._usuarioService.obterToken()}`, {
+
+                texto: comentario
+            })
+            .then(novoComentario => resolve(novoComentario))
+            .catch(erro => reject('Não foi possível comentar.'));
         });
     }
 }

@@ -3,7 +3,7 @@ import HttpService from "./HttpService";
 export default class UsuarioService extends HttpService {
 
     autenticar(dadosAutenticacaoUsuario) {
-        return fetch('http://localhost:8080/api/public/login', {
+        return fetch(`${this._publicApiUrl}login`, {
     
             headers: new Headers({ 'Content-type': 'application/json' }),
             method: 'post',

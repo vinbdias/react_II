@@ -26,14 +26,53 @@ class FotoInfo extends Component {
     constructor(props) {
 
         super(props);
-        this.state = { usuariosCurtiram: this.props.foto.likers };
+        this.state = {
+            usuariosCurtiram: this.props.foto.likers,
+            comentarios: this.props.foto.comentarios
+        };
     }
     
     componentWillMount() {
 
-        Pubsub.subscribe('atualiza-usuarios-curtiram', (topico, infoUsuarioCurtiu) => {
+        this._atualizaCurtidas();
+        this._atualizaComentarios();
+    }
 
-            this.state.usuariosCurtiram.find(usuarioCurtiu => usuarioCurtiu.login == infoUsuarioCurtiu.liker.login);
+    _atualizaCurtidas() {
+
+        Pubsub.subscribe('atualiza-usuarios-curtiram', (topico, infoUsuarioCurtiu) => {
+            
+            if(this.props.foto.id === infoUsuarioCurtiu.fotoId) {
+                
+                const possivelCurtida = 
+                    this.state
+                    .usuariosCurtiram
+                    .find(usuarioCurtiu => 
+                        usuarioCurtiu.login === infoUsuarioCurtiu.usuarioCurtiu.login);
+
+                if(possivelCurtida === undefined) {
+
+                    const novasCurtidas = this.state.usuariosCurtiram.concat(infoUsuarioCurtiu.usuarioCurtiu);
+                    this.setState({ usuariosCurtiram: novasCurtidas });                    
+                }
+                else {
+
+                    const novasCurtidas = this.state.usuariosCurtiram.filter(usuarioCurtiu => usuarioCurtiu.login !== infoUsuarioCurtiu.usuarioCurtiu.login);
+                    this.setState({ usuariosCurtiram: novasCurtidas });
+                }
+            }
+        });        
+    }
+
+    _atualizaComentarios() {
+
+        Pubsub.subscribe('novos-comentarios', (topico, infoComentario) => {
+
+            if(this.props.foto.id === infoComentario.fotoId) {
+
+                const novosComentarios = this.state.comentarios.concat(infoComentario.novoComentario);
+                this.setState({ comentarios: novosComentarios });
+            }
         });
     }
 
@@ -55,7 +94,7 @@ class FotoInfo extends Component {
 
             <ul className="foto-info-comentarios">
               {
-                  this.props.foto.comentarios.map(comentario => 
+                  this.state.comentarios.map(comentario => 
                   <li key={comentario.id} className="comentario">
                     <Link to={`/timeline/${comentario.login}`} className="foto-info-autor">{comentario.login} </Link>
                     {comentario.texto}
@@ -85,7 +124,22 @@ class FotoAtualizacoes extends Component {
                 this.setState({ curtida: !this.state.curtida });
                 Pubsub.publish('atualiza-usuarios-curtiram', { fotoId: this.props.foto.id, usuarioCurtiu });
             })
-            .catch((erro) => { throw new Error(erro) });
+            .catch((erro) => console.log(erro));
+    }
+
+    comentarFoto(evento) {
+
+        evento.preventDefault();
+        this._fotoService
+        .comentarFoto(this.props.foto.id, this.comentario.value)
+        .then(novoComentario => {
+
+            Pubsub.publish('novos-comentarios', {
+                fotoId: this.props.foto.id,
+                novoComentario
+            });
+        });
+
     }
 
     render() {
@@ -93,8 +147,8 @@ class FotoAtualizacoes extends Component {
         return (
         <section className="fotoAtualizacoes">
             <a onClick={this.curtirFoto.bind(this)} className={this.state.curtida ? 'fotoAtualizacoes-like-ativo' : 'fotoAtualizacoes-like'}>Curtir</a>
-            <form className="fotoAtualizacoes-form">
-                <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" />
+            <form className="fotoAtualizacoes-form" onSubmit={this.comentarFoto.bind(this)}>
+                <input type="text" placeholder="Adicione um comentário..." className="fotoAtualizacoes-form-campo" ref={input => this.comentario = input} />
                 <input type="submit" value="Comentar!" className="fotoAtualizacoes-form-submit" />
             </form>
         </section>            

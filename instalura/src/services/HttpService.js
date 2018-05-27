@@ -1,5 +1,11 @@
 export default class HttpService {
 
+    constructor() {
+
+        this._publicApiUrl = `http://localhost:8080/api/public/`;
+        this._privateApiUrl = `http://localhost:8080/api/`;        
+    }
+
     _handleErrors(res) {
 
         if(!res.ok) 
