@@ -48,5 +48,15 @@ export default class FotoService extends HttpService {
             .catch(erro => reject('Não foi possível comentar.'));
         });
     }
+
+    pesquisarFotoss(termoPesquisa) {
+
+        return new Promise((resolve, reject) => {
+
+            this.get(`${this._publicApiUrl}/${termoPesquisa}`)
+                .then(resultadoPesquisa => resolve(resultadoPesquisa))
+                .catch(erro => reject('Não foi possível pesquisar.'));
+        });
+    }
 }
 

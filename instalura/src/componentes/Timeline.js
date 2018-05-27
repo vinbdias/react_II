@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import FotoItem from './Foto';
 import FotoService from '../services/FotoService';
+import Pubsub from 'pubsub-js';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 
 export default class Timeline extends Component {
 
@@ -13,10 +15,22 @@ export default class Timeline extends Component {
     }
 
     componentWillMount() {
+        
+        this._carregarFotosDeAcordoComUrlEPropriedade();
+
+        this._carregarFotosDeAcordoComABarraDePesquisa();
+    }  
+
+    _carregarFotosDeAcordoComUrlEPropriedade() {
 
         let usuario = (this.props.usuario !== undefined) ? this.props.usuario : '';
-        this._carregarFotos(usuario);
-    }  
+        this._carregarFotos(usuario);        
+    }
+
+    _carregarFotosDeAcordoComABarraDePesquisa() {
+
+        Pubsub.subscribe('timeline', (topico, fotos) => this.setState({ fotos }));        
+    }
     
     componentWillReceiveProps(nextProps) {
 
@@ -34,12 +48,12 @@ export default class Timeline extends Component {
 
     render() {            
         
-        return (
+        return (            
             <div className="fotos container">
                 {
                     this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} />)
                 }                
-            </div>             
+            </div>               
         );        
     }
 }

@@ -1,6 +1,26 @@
 import React, { Component } from 'react';
+import FotoService from '../services/FotoService';
+import Pubsub from 'pubsub-js'; 
 
 export default class Header extends Component {
+
+    constructor() {
+
+        super();
+        this._fotoService = new FotoService();
+    }
+
+    pesquisar(evento) {
+
+        evento.preventDefault();
+        this._fotoService
+            .pesquisarFotoss(this._inputPesquisa.value)
+            .then(fotos => {
+
+                Pubsub.publish('timeline', fotos);
+            })
+            .catch(erro => console.log(erro));
+    }
 
     render() {
 
@@ -10,8 +30,8 @@ export default class Header extends Component {
                 Instalura
             </h1>
 
-            <form lpformnum="1" className="header-busca">
-                <input type="text" name="search" placeholder="Pesquisa" className="header-busca-campo" />
+            <form lpformnum="1" className="header-busca" onSubmit={this.pesquisar.bind(this)}>
+                <input type="text" name="search" placeholder="Pesquisa" className="header-busca-campo" ref={input => this._inputPesquisa = input} />
                 <input type="submit" value="Buscar" className="header-busca-submit" />
             </form>
 

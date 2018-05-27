@@ -19,8 +19,8 @@ export default class Login extends Component {
 
         let dadosAutenticacaoUsuario = {
 
-            login: this._login.value,
-            senha: this._senha.value
+            login: this._inputLogin.value,
+            senha: this._inputSenha.value
         };
 
         this._usuarioService
@@ -43,8 +43,8 @@ export default class Login extends Component {
                 <h1 className="header-logo">Instalura</h1>
                 <span>{this.state.mensagem}</span>
                 <form onSubmit={this.autenticarUsuario.bind(this)}>
-                    <input type="text" ref={(input) => this._login = input} />
-                    <input type="password" ref={(input) => this._senha = input} />
+                    <input type="text" ref={(input) => this._inputLogin = input} />
+                    <input type="password" ref={(input) => this._inputSenha = input} />
                     <input type="submit" value="login" />
                 </form>
            </div> 
