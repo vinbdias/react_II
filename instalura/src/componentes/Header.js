@@ -14,11 +14,8 @@ export default class Header extends Component {
 
         evento.preventDefault();
         this._fotoService
-            .pesquisarFotoss(this._inputPesquisa.value)
-            .then(fotos => {
-
-                Pubsub.publish('timeline', fotos);
-            })
+            .pesquisarFotos(this._inputPesquisa.value)
+            .then(fotos => Pubsub.publish('timeline', fotos))
             .catch(erro => console.log(erro));
     }
 

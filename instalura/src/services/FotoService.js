@@ -49,7 +49,7 @@ export default class FotoService extends HttpService {
         });
     }
 
-    pesquisarFotoss(termoPesquisa) {
+    pesquisarFotos(termoPesquisa) {
 
         return new Promise((resolve, reject) => {
 

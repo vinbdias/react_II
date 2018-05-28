@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import FotoItem from './Foto';
 import FotoService from '../services/FotoService';
 import Pubsub from 'pubsub-js';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 export default class Timeline extends Component {
 
@@ -48,12 +48,16 @@ export default class Timeline extends Component {
 
     render() {            
         
-        return (            
-            <div className="fotos container">
-                {
-                    this.state.fotos.map(foto => <FotoItem key={foto.id} foto={foto} />)
-                }                
-            </div>               
+        return (                   
+                    <div className="fotos container">
+                        {
+                            this.state.fotos.map(foto => {
+                                return (                                    
+                                        <FotoItem key={foto.id} foto={foto} />
+                                );
+                            })
+                        }                
+                    </div>                        
         );        
     }
 }
