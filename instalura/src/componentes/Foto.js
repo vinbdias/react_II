@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import FotoService from '../services/FotoService';
-import Pubsub from 'pubsub-js';
+import UsuarioService from '../services/UsuarioService';
 
 class FotoHeader extends Component {
 
@@ -23,66 +23,15 @@ class FotoHeader extends Component {
 
 class FotoInfo extends Component {
 
-    constructor(props) {
-
-        super(props);
-        this.state = {
-            usuariosCurtiram: this.props.foto.likers,
-            comentarios: this.props.foto.comentarios
-        };
-    }
     
-    componentWillMount() {
-
-        this._atualizaCurtidas();
-        this._atualizaComentarios();
-    }
-
-    _atualizaCurtidas() {
-
-        Pubsub.subscribe('atualiza-usuarios-curtiram', (topico, infoUsuarioCurtiu) => {
-            
-            if(this.props.foto.id === infoUsuarioCurtiu.fotoId) {
-                
-                const possivelCurtida = 
-                    this.state
-                    .usuariosCurtiram
-                    .find(usuarioCurtiu => 
-                        usuarioCurtiu.login === infoUsuarioCurtiu.usuarioCurtiu.login);
-
-                if(possivelCurtida === undefined) {
-
-                    const novasCurtidas = this.state.usuariosCurtiram.concat(infoUsuarioCurtiu.usuarioCurtiu);
-                    this.setState({ usuariosCurtiram: novasCurtidas });                    
-                }
-                else {
-
-                    const novasCurtidas = this.state.usuariosCurtiram.filter(usuarioCurtiu => usuarioCurtiu.login !== infoUsuarioCurtiu.usuarioCurtiu.login);
-                    this.setState({ usuariosCurtiram: novasCurtidas });
-                }
-            }
-        });        
-    }
-
-    _atualizaComentarios() {
-
-        Pubsub.subscribe('novos-comentarios', (topico, infoComentario) => {
-
-            if(this.props.foto.id === infoComentario.fotoId) {
-
-                const novosComentarios = this.state.comentarios.concat(infoComentario.novoComentario);
-                this.setState({ comentarios: novosComentarios });
-            }
-        });
-    }
-
     render() {
 
         return (
         <div className="foto-info">
             <div className="foto-info-likes">
               {
-                  this.state.usuariosCurtiram.map(usuarioCurtiu => { return <Link to={`/timeline/${usuarioCurtiu.login}`} key={usuarioCurtiu.login}>{usuarioCurtiu.login},</Link> })
+                this.props.foto.likers.map(usuarioCurtiu => 
+                    <Link to={`/timeline/${usuarioCurtiu.login}`} key={usuarioCurtiu.login}>{usuarioCurtiu.login},</Link>)
               }
                curtiram            
             </div>
@@ -94,7 +43,7 @@ class FotoInfo extends Component {
 
             <ul className="foto-info-comentarios">
               {
-                  this.state.comentarios.map(comentario => 
+                  this.props.foto.comentarios.map(comentario => 
                   <li key={comentario.id} className="comentario">
                     <Link to={`/timeline/${comentario.login}`} className="foto-info-autor">{comentario.login} </Link>
                     {comentario.texto}
@@ -112,34 +61,24 @@ class FotoAtualizacoes extends Component {
 
         super(props);
         this._fotoService = new FotoService();
-        this.state = { curtida: this.props.foto.likeada };
+        this._usuarioService = new UsuarioService();
+
+        const curtida = this.props.foto.likers.find(liker => liker.login === this._usuarioService.obterUsuarioLogado());
+
+        this.state = { curtida: (curtida !== undefined) ? true : false };        
     }
 
     curtirFoto(evento) {
 
         evento.preventDefault();
-        this._fotoService.curtirFoto(this.props.foto.id)
-            .then(usuarioCurtiu => {
-
-                this.setState({ curtida: !this.state.curtida });
-                Pubsub.publish('atualiza-usuarios-curtiram', { fotoId: this.props.foto.id, usuarioCurtiu });
-            })
-            .catch((erro) => console.log(erro));
+        this.setState({ curtida: !this.state.curtida });
+        this.props.curtirFoto(this.props.foto.id, this._fotoService);
     }
 
     comentarFoto(evento) {
 
         evento.preventDefault();
-        this._fotoService
-        .comentarFoto(this.props.foto.id, this._inputComentario.value)
-        .then(novoComentario => {
-
-            Pubsub.publish('novos-comentarios', {
-                fotoId: this.props.foto.id,
-                novoComentario
-            });
-        });
-
+        this.props.comentarFoto(this.props.foto.id, this._inputComentario.value, this._fotoService);
     }
 
     render() {
@@ -165,7 +104,7 @@ export default class FotoItem extends Component {
             <FotoHeader foto={this.props.foto} />
             <img alt="foto" className="foto-src" src={this.props.foto.urlFoto} />
             <FotoInfo foto={this.props.foto} />
-            <FotoAtualizacoes foto={this.props.foto} />
+            <FotoAtualizacoes {...this.props} />
         </div>            
         );
     }

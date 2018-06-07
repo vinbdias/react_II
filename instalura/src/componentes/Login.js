@@ -27,6 +27,7 @@ export default class Login extends Component {
             .autenticar(dadosAutenticacaoUsuario)
             .then(token => { 
                 localStorage.setItem('auth-token', token);
+                localStorage.setItem('usuarioLogado', dadosAutenticacaoUsuario.login);
                 this.forceUpdate();
              })
             .catch(erro => this.setState({mensagem: erro.message}));

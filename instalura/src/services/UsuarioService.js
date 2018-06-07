@@ -22,6 +22,14 @@ export default class UsuarioService extends HttpService {
         return false;          
     }
 
+    obterUsuarioLogado() {
+
+        if(localStorage.getItem('usuarioLogado') !== null)
+            return localStorage.getItem('usuarioLogado');
+
+        return '';          
+    }
+
     removerToken() {
 
         localStorage.removeItem('auth-token');

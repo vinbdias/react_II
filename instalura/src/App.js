@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Header from './componentes/Header';
 import Timeline from './componentes/Timeline';
-import {Link} from 'react-router-dom';
 
 export default class App extends Component {
 
